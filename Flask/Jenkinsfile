@@ -1,0 +1,160 @@
+pipeline {
+    agent any 
+    stages {
+        stage ("DEV") {
+            steps {
+                sh "date"
+            }
+        }
+        stage ("Test") {
+            steps {
+                sh "pwd"
+            }
+        }
+        stage ("PROD") {
+            steps {
+                sh "uptime"
+            }
+        }
+    }
+}
+
+// Error handling 1
+pipeline {
+    agent any
+    stages {
+        stage ("Hello") {
+            steps {
+                echo "Command in Stage 1"
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "I will always run"
+        }
+        success {
+            echo "Test passed successfully"
+        }
+        failure {
+            echo "Tests failed"
+        }
+    }
+}
+
+//Error handling 2
+pipeline {
+    agent any
+    stages {
+        stage ("Stage 1") {
+            steps {
+                echo "Stage 1 complete"
+            }
+        }
+        stage ("Stage 2") {
+            steps {
+                echo "Stage 3 complete"
+            }
+        }
+        stage ("Stage 3") {
+            steps {
+                echo "Stage 3 complete"
+            }
+        }
+    }
+    post {
+        always {
+            echo "I will always run"
+        }
+        success {
+            echo "Test passed successfully"
+        }
+        failure {
+            echo "Tests failed"
+        }
+    } 
+}
+
+//error handling 3
+pipeline {
+    agent any
+    stages {
+        stage ("Stage 1") {
+            steps {
+                echo "Stage 1 complete"
+            }
+        }
+        stage ("Stage 2") {
+            steps {
+                echo "Stage 2 complete"
+            }
+            post {
+                success {
+                    echo "Stage 2 passed"
+                }
+                failure {
+                    echo "Stage 2 failed"
+                }
+            }
+        }
+        stage ("Stage 3") {
+            steps {
+                echo "Stage 3 complete"
+            }
+        }
+    }
+    post {
+        always {
+            echo "I will always run"
+        }
+        success {
+            echo "Test passed successfully"
+        }
+        failure {
+            echo "Tests failed"
+        }
+    } 
+}
+
+//Error handling 4
+pipeline {
+    agent any
+    stages {
+        stage ("Stage 1") {
+            steps {
+                echo "Stage 1 complete"
+            }
+        }
+        stage ("Stage 2") {
+            steps {
+                catchError(stageResult: 'FAILURE')
+                sh '/bin/false'
+            }
+            post {
+                success {
+                    echo "Stage 2 passed"
+                }
+                failure {
+                    echo "Stage 2 failed"
+                }
+            }
+        }
+        stage ("Stage 3") {
+            steps {
+                echo "Stage 3 complete"
+            }
+        }
+    }
+    post {
+        always {
+            echo "I will always run"
+        }
+        success {
+            echo "Test passed successfully"
+        }
+        failure {
+            echo "Tests failed"
+        }
+    } 
+}
